@@ -5,9 +5,9 @@ import {
   NotoSansLao_700Bold,
   useFonts,
 } from "@expo-google-fonts/noto-sans-lao";
-import UseNoti from "../services/Notifications";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { Platform } from "react-native";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import {
   ActivityIndicator,
@@ -16,6 +16,7 @@ import {
   View,
 } from "../components/ui";
 import { AuthProvider, useAuth } from "../context/auth";
+import UseNoti from "../services/Notifications";
 import { useWebClickToDismiss } from "../utils/keyboard";
 import "../global.css";
 
@@ -67,7 +68,9 @@ export default function RootLayout() {
     NotoSansLao_700Bold,
   });
 
-  if (!fontsLoaded) {
+  // เว็บใช้ฟอนต์จาก CDN (public/index.html) → ไม่ต้องรอ useFonts ที่ 404
+  // มือถือ bundle ฟอนต์ในตัว → รอโหลดให้เสร็จก่อน
+  if (!fontsLoaded && Platform.OS !== "web") {
     return null;
   }
 

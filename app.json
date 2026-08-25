@@ -59,6 +59,7 @@
       "expo-font"
     ],
     "experiments": {
+      "baseUrl": "/Itxschedule",
       "typedRoutes": true,
       "reactCompiler": true
     },
