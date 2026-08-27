@@ -19,12 +19,9 @@ import { AuthProvider, useAuth } from "../context/auth";
 import UseNoti from "../services/Notifications";
 import { useWebClickToDismiss } from "../utils/keyboard";
 import "../global.css";
-
 function RootNavigator() {
   const { token, isLoading } = useAuth();
   useWebClickToDismiss();
-  // ไม่ต้องเช็ค Platform ตรงนี้ — Metro สลับไป Notifications.web.ts (no-op) ให้เอง
-  // และการเรียก hook แบบมีเงื่อนไขก็ผิดกฎ hooks ด้วย
   UseNoti();
   if (isLoading) {
     return (
