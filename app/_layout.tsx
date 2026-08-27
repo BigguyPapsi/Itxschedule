@@ -68,7 +68,7 @@ export default function RootLayout() {
     NotoSansLao_700Bold,
   });
 
-  // เว็บใช้ฟอนต์จาก CDN (public/index.html) → ไม่ต้องรอ useFonts ที่ 404
+  // เว็บใช้ฟอนต์จาก CDN (app/+html.tsx) → ไม่ต้องรอ useFonts ที่ 404
   // มือถือ bundle ฟอนต์ในตัว → รอโหลดให้เสร็จก่อน
   if (!fontsLoaded && Platform.OS !== "web") {
     return null;

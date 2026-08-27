@@ -13,6 +13,14 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="description" content="ITXschedule - Schedule Management App" />
         <title>ITXschedule</title>
 
+        {/* ฟอนต์ลาวจาก Google Fonts CDN — เว็บไม่ใช้ฟอนต์ที่ bundle มากับแอป */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+
         {/* ปิด scroll ของ body เพื่อให้ ScrollView ใน RN คุมการเลื่อนเอง */}
         <ScrollViewStyleReset />
 
