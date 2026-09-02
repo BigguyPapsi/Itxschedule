@@ -1,6 +1,12 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
-import { Alert, Platform, ScrollView } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Alert,
+  Platform,
+  ScrollView,
+  type GestureResponderEvent,
+  type LayoutChangeEvent,
+} from "react-native";
 import {
   ActivityIndicator,
   Ionicons,
@@ -13,6 +19,7 @@ import {
 import { useAuth } from "../context/auth";
 import { api } from "../services/api";
 import type { ApiError, BulkStaffItem } from "../types/api";
+import { useWebCameraFocus } from "../utils/webCameraFocus";
 
 const showError = (message: string) => {
   if (Platform.OS === "web") return window.alert(message);
@@ -81,6 +88,9 @@ export default function ScanQR() {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState<BulkStaffItem[] | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  // เว็บมือถือ: บังคับเปิด autofocus + แตะเพื่อโฟกัสใหม่ (บน native เป็น no-op)
+  const { tuneCamera, refocus, isWeb } = useWebCameraFocus();
+  const overlaySize = useRef<{ width: number; height: number } | null>(null);
   // ---------- จบโซน hooks ----------
 
   // ---------- กันคนไม่ใช่ admin ----------
@@ -114,6 +124,20 @@ export default function ScanQR() {
       </View>
     );
   }
+
+  // แตะบน overlay → แปลงพิกัดเป็นสัดส่วน 0..1 ของกรอบภาพ แล้วสั่งกล้องโฟกัสจุดนั้น
+  const onOverlayPress = (e: GestureResponderEvent) => {
+    const size = overlaySize.current;
+    if (!size?.width || !size?.height) {
+      refocus();
+      return;
+    }
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    refocus(
+      clamp(e.nativeEvent.locationX / size.width),
+      clamp(e.nativeEvent.locationY / size.height)
+    );
+  };
 
   const onScanned = ({ data }: { data: string }) => {
     if (scanned) return; // กันสแกนรัวซ้ำ
@@ -157,10 +181,17 @@ export default function ScanQR() {
             style={{ flex: 1 }}
             barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
             onBarcodeScanned={onScanned}
+            onCameraReady={tuneCamera}
           />
 
-          {/* overlay มืด + ช่องเล็งตรงกลาง */}
-          <View className="absolute inset-0">
+          {/* overlay มืด + ช่องเล็งตรงกลาง (แตะเพื่อสั่งโฟกัสใหม่ — มีผลเฉพาะเว็บ) */}
+          <Pressable
+            className="absolute inset-0"
+            onLayout={(e: LayoutChangeEvent) => {
+              overlaySize.current = e.nativeEvent.layout;
+            }}
+            onPress={onOverlayPress}
+          >
             {/* แถวบน */}
             <View className="flex-1 bg-black/60" />
 
@@ -217,8 +248,13 @@ export default function ScanQR() {
               <Text className="rounded-full bg-black/60 px-4 py-2 font-lao text-sm text-white">
                 ເອົາ QR code ໃຫ້ຢູ່ໃນກອບ
               </Text>
+              {isWeb && (
+                <Text className="mt-2 rounded-full bg-black/60 px-4 py-2 font-lao text-xs text-white">
+                  ແຕະໜ້າຈໍເພື່ອປັບໂຟກັດ
+                </Text>
+              )}
             </View>
-          </View>
+          </Pressable>
         </View>
       ) : (
         /* ---------- โหมดตรวจข้อมูลก่อนอัปโหลด ---------- */

@@ -12,7 +12,7 @@ type NavConfig = {
 const NAV_CONFIG: NavConfig[] = [
   { path: "/", title: "ໜ້າຫຼັກ", backBtn: false },
   { path: "/schedule", title: "ຕາຕະລາງເຂົ້າກະ", backBtn: false },
-  { path: "/history", title: "ປະຫວັດການ", backBtn: false },
+  { path: "/history", title: "ປະຫວັດ", backBtn: false },
   { path: "/settings", title: "ຕັ້ງຄ່າ", backBtn: false },
   { path: "/profile", title: "ແກ້ໄຂຂໍ້ມູນສ່ວນຕົວ", backBtn: true },
   { path: "/mUser", title: "ຈັດການຜູ້ໃຊ້", backBtn: true },
