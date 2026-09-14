@@ -30,7 +30,6 @@ function RootNavigator() {
       </View>
     );
   }
-
   return (
     <SafeAreaView edges={["top"]} style={{ flex: 1 }}>
       {token && <TopNav />}
